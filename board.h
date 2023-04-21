@@ -2,6 +2,8 @@
 #define BOARD_H
 
 #include <iostream>
+#include <memory> 
+#include <vector>
 #include <colors.h>
 
 class Player {
@@ -20,7 +22,7 @@ class WhitePlayer : Player {
 
 };
 
-class Board {
+class Board { // Eventually add komi and handicap mechanism as well.
     public:
         static const int BOARD_SIZE = 19; // Must be odd
         bool occupied[BOARD_SIZE][BOARD_SIZE];
@@ -41,10 +43,25 @@ class Board {
             }
         }
 
+        /**
+         * The maximum possible neighbours are four, in the cardinal directions.
+         * First check that in each of these spots, a stone of the same color is placed.
+         * There might be conflict with the check legal move function, if move is suicidal..
+        */
+        void initializeStoneNeighbours(Stone stone) {
+            stone.liberties.stoneChain.
+        }
+
+        void initializeStoneLiberties(Stone stone) {
+
+        }
+
         void placeStone(Stone stone, int x, int y) {
             if (isMoveLegal(stone, x, y)) {
                 if (turn) {
                     stone = Stone(WHITE, x, y);
+                    initializeStoneLiberties(stone);
+                    initializeStoneNeighbours(stone);
                 }
                 else {
                     stone = Stone(BLACK, x, y);
@@ -84,7 +101,7 @@ class Board {
                 else if (stone.color() == WHITE) {
                     capturer_color = BLACK;
                 }
-                for (Stone member : stone.stoneChain()) {
+                for (Stone member : stone.stoneChain) {
                     stone.setColor(EMPTY);
                     occupied[stone.y()][stone.x()] = false;
                 }
@@ -95,10 +112,13 @@ class Board {
 
 class Stone {
     public:
+
         Color color;
         int x;
         int y;
-        std::vector<int> stoneChain;
+        StoneChain stoneChain;
+        StoneChain liberties;
+        StoneChain neighbours;
 
         Stone() {} // Default constructor 
         Stone(Color color_, int x_, int y_) : color(color_), x(x_), y(y_) {
@@ -116,14 +136,25 @@ class Stone {
         int y() { return y; };
         void setY(int y_) { this->y = y_; };
 
-        void initializeLiberties() {
+        /**
+         * This method should be in board, because the liberties
+         * the stone will have are determined at placement.
+        */
+        // void initializeLiberties() {
+
+        // }
+
+        /**
+         * This method should be in board, because the neighbours
+         * can only be initialized when the stone is placed.
+        */
+        void initializeNeighbours() { 
 
         }
 
-        void initializeNeighbours() {
-
-        }
-
+        /**
+         * Add all the stone's neighbours that are of the same color to the stoneChain
+        */
         void initializeStoneChain() {
             
         }
@@ -131,6 +162,29 @@ class Stone {
         Color color() { return color; };
         int x() { return x; };
         int y() { return y; };
+};
+
+/**
+ * StoneChain is ListOf: Stone.
+ * To StoneChain, we can:
+ * - add/remove a Stone
+ * - clear the StoneChain
+*/
+class StoneChain : Stone {
+    public:
+        StoneChain() {} // Default constructor
+        StoneChain(std::shared_ptr<Stone> stone) { add(stone); }
+        
+        void clear() {
+            stoneChain.clear(); 
+        }
+        
+        void add(std::shared_ptr<Stone> stone) {
+            stoneChain.push_back(stone);
+        }
+
+    public:
+        std::vector<std::shared_ptr<Stone>> stoneChain;
 };
 
 #endif
