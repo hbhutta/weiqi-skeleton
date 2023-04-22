@@ -8,19 +8,30 @@
 
 class Player {
     public:
+		bool color;
+		bool turn;
         int points;
 
         Player() {}
-        Player(int points_) : points(points_) {}
+        Player(bool color_, bool turn_, int points_) : color(color_), turn(turn_),  points(points_) {}
 };
 
-class BlackPlayer : Player {
+/** We will want to determine who has the turn if a player chooses to pass.
+ * For now, we can make 'turn' an attribute of the player class, and in the 
+ * subclasses, the turn will be initialized to indicate that Black always plays first
+ * Equivalently, we don't have to make the subclasses, if we just inlcude an attribute that
+ * distinguishes a player as black or white
+ */
 
-};
-
-class WhitePlayer : Player {
-
-};
+// class BlackPlayer : Player {
+// 	public:
+// 		BlackPlayer() {} // Default constructor
+// };
+// 
+// class WhitePlayer : Player {
+// 	public:
+// 		WhitePlayer() {} // Default constructor
+// };
 
 class Board { // Eventually add komi and handicap mechanism as well.
     public:
