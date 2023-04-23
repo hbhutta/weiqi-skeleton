@@ -49,9 +49,18 @@ class Board { // Eventually add komi and handicap mechanism as well.
             for (int y = 0; y < BOARD_SIZE; y++) {
                 for (int x = 0; x < BOARD_SIZE; x++) {
                     occupied[y][x] = false; // All points are non-occupied initially
-                    board[y][x] = Stone(EMPTY, x, y); // There are no stones initially
+                    Stone stone = Stone(EMPTY, x, y);
+                    initializeStone(stone);
+                    board[y][x] = stone; // There are no stones initially
                 }
             }
+        }
+
+        /**
+         * Any stone is a part of its own stone chain
+        */
+        void initializeStoneChain(Stone stone) {
+            stone.stoneChain.push_back(stone);
         }
 
         /**
@@ -59,15 +68,29 @@ class Board { // Eventually add komi and handicap mechanism as well.
          * First check that in each of these spots, a stone of the same color is placed.
          * There might be conflict with the check legal move function, if move is suicidal..
         */
+       /**
+        * Vectors are possibly already initialized, by their default constructor
+       */
         void initializeStoneNeighbours(Stone stone) {
-            stone.liberties.stoneChain.
+            
         }
 
         void initializeStoneLiberties(Stone stone) {
+        }
 
+        void initializeStone(Stone stone) {
+            initializeStoneChain(stone);
+            initializeStoneLiberties(stone);
+            initializeStoneNeighbours(stone);
         }
 
         void placeStone(Stone stone, int x, int y) {
+            // The stone to place must be initialized first
+            Stone stone; // this will resort to default constructor
+            initializeStone(stone);
+            // The stone must be initialize with a position on the board
+            // They could be int x and int y, and initially both be -1, -1,
+            // which cannot be on the board
             if (isMoveLegal(stone, x, y)) {
                 if (turn) {
                     stone = Stone(WHITE, x, y);
@@ -100,7 +123,12 @@ class Board { // Eventually add komi and handicap mechanism as well.
          * the move is suicidal
         */
         bool isMoveSuicidal(Stone stone, int x, int y) {
-            
+            Color safeColor = stone.color();
+            for (Stone neighbour : stone.neighbours()) {
+                if (neighbour.color = oppositeColor) {
+                    // ...
+                } 
+            }
         }
 
         void capture(Stone stone) {
@@ -123,20 +151,18 @@ class Board { // Eventually add komi and handicap mechanism as well.
 
 class Stone {
     public:
-
         Color color;
-        int x;
-        int y;
-        StoneChain stoneChain;
-        StoneChain liberties;
-        StoneChain neighbours;
+        // What difference does this make?
+        unsigned int x;
+        unsigned int y;
+        std::vector<Stone> stoneChain;
+        std::vector<Stone> liberties;
+        std::vector<Stone> neighbours;
+        // std::vector<std::shared_ptr<Stone>> neighbours;
+        // std::vector<std::shared_ptr<Stone>> stoneChain;
 
         Stone() {} // Default constructor 
-        Stone(Color color_, int x_, int y_) : color(color_), x(x_), y(y_) {
-            initializeLiberties();
-            initializeNeighbours();
-            initializeStoneChain();
-        }
+        Stone(Color color_, int x_, int y_) : color(color_), x(x_), y(y_) {}
 
         Color color() { return color; };
         void setColor(Color color_) { this->color = color_; };
@@ -159,16 +185,16 @@ class Stone {
          * This method should be in board, because the neighbours
          * can only be initialized when the stone is placed.
         */
-        void initializeNeighbours() { 
+        // void initializeNeighbours() { 
 
-        }
+        // }
 
         /**
          * Add all the stone's neighbours that are of the same color to the stoneChain
         */
-        void initializeStoneChain() {
+        // void initializeStoneChain() {
             
-        }
+        // }
 
         Color color() { return color; };
         int x() { return x; };
