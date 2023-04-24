@@ -63,4 +63,10 @@ class Stone {
 ## Algorithms
 ### Capture stone
 
-### 
+### Tips
+- Use pointers because it is more efficent
+- Use `const` wherever applicable
+- Use enum classes over enums because of type safety (https://stackoverflow.com/questions/18335861/why-is-enum-class-preferred-over-plain-enum)
+- Pointers are needed when:
+-   if you allocate stuff on the heap. That is, you want the lifetime of a variable to extend beyond the scope it's declared in.
+- Pointers must be used if you want to use the heap.
